@@ -12,6 +12,7 @@ namespace WrathCombo.Combos.PvP
             Cure3 = 29225,
             AfflatusMisery = 29226,
             Aquaveil = 29227,
+            AfflatusPurgation = 29230,
             MiracleOfNature = 29228,
             SeraphStrike = 29229;
 
