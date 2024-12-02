@@ -34,6 +34,7 @@ namespace WrathCombo.Combos.PvP
                 Hidden = 1316,
                 Bunshin = 2010,
                 ShadeShift = 2011,
+                UnsealedSeitonTenchu = 3192,
                 FleetingRaijuReady = 3211,
                 ZeshoMeppoReady = 4305;
         }
@@ -199,12 +200,14 @@ namespace WrathCombo.Combos.PvP
                             {
                                 if (IsEnabled(CustomComboPreset.NINPvP_AoE_Meisui) && inMeisuiRange && !meisuiLocked)
                                     return OriginalHook(Meisui);
-
+                                
+                                if (!gokaLocked)
+                                    return OriginalHook(GokaMekkyaku);
+                                
                                 if (!dotonLocked)
                                     return OriginalHook(Doton);
 
-                                if (!gokaLocked)
-                                    return OriginalHook(GokaMekkyaku);
+
                             }
                             else return actionID;  // if automatic is not enabled and in mudra mode, ensures fuma shuriken is the option so mudras can be properly chosen
                         }
