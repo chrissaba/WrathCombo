@@ -134,7 +134,7 @@ namespace WrathCombo.Combos.PvP
                     if (hasKaiten)
                         return OriginalHook(actionID);
 
-                    if (!isMoving && isTargetPrimed)
+                    if (isTargetPrimed)
                     {
                         // Tendo Setsugekka
                         if (hasTendo)
