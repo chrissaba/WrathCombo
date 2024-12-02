@@ -99,7 +99,7 @@ namespace WrathCombo.Combos.PvP
                         }
 
                         //GnashingFang
-                        if (IsEnabled(CustomComboPreset.GNBPvP_ST_GnashingFang) && (ActionReady(GnashingFang) || OriginalHook(GnashingFang) != GnashingFang))
+                        if (IsEnabled(CustomComboPreset.GNBPvP_ST_GnashingFang) && (ActionReady(GnashingFang) || OriginalHook(GnashingFang) != GnashingFang) && !ActionReady(FatedCircle))
                             return OriginalHook(GnashingFang);
 
                     }
