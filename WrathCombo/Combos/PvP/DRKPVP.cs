@@ -75,7 +75,7 @@ namespace WrathCombo.Combos.PvP
 
                         if (InMeleeRange())
                         {
-                            if (IsEnabled(CustomComboPreset.DRKPvP_Impalement) && ActionReady(Impalement))
+                            if (IsEnabled(CustomComboPreset.DRKPvP_Impalement) && ActionReady(Impalement) && PlayerHealthPercentageHp() < shadowBringerThreshold)
                                 return OriginalHook(Impalement);
 
                             if (comboTime > 1f)
