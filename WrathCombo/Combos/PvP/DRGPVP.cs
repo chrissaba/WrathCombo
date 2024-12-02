@@ -15,6 +15,7 @@ namespace WrathCombo.Combos.PvP
             ChaoticSpring = 29490,
             Geirskogul = 29491,
             HighJump = 29493,
+            SkyHigh = 29497,
             ElusiveJump = 29494,
             WyrmwindThrust = 29495,
             HorridRoar = 29496,
