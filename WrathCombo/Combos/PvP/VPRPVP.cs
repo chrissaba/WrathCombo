@@ -22,6 +22,7 @@ namespace WrathCombo.Combos.PvP
             SecondGeneration = 39170,
             ThirdGeneration = 39171,
             FourthGeneration = 39172,
+            WorldSwallower = 39190,
             Ouroboros = 39173,
             DeathRattle = 39174,
             TwinfangBite = 39175,
