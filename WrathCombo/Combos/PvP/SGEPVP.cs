@@ -12,6 +12,7 @@ namespace WrathCombo.Combos.PvP
             Icarus = 29261,
             Toxikon = 29262,
             Kardia = 29264,
+            Mesotes = 29266,
             EukrasianDosis = 29257,
             Toxicon2 = 29263,
             Psyche = 41658;
