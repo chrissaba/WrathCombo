@@ -20,6 +20,7 @@
 		<AssemblyName>WrathCombo</AssemblyName>
 		<PackageId>WrathCombo</PackageId>
 		<Product>WrathCombo</Product>
+		<BaseOutputPath>C:\Users\chris\AppData\Roaming\XIVLauncher\devPlugins</BaseOutputPath>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">

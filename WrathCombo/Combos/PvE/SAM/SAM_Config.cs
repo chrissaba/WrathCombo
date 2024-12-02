@@ -155,7 +155,7 @@ internal partial class SAM
                 // Soten
                 case CustomComboPreset.SAMPvP_Soten:
                     UserConfig.DrawSliderInt(0, 2, SAMPvP.Config.SAMPvP_Soten_Charges, "Charges to Keep", 178);
-                    UserConfig.DrawSliderInt(1, 10, SAMPvP.Config.SAMPvP_Soten_Range, "Maximum Range", 173);
+                    UserConfig.DrawSliderInt(1, 20, SAMPvP.Config.SAMPvP_Soten_Range, "Maximum Range", 173);
                     UserConfig.DrawAdditionalBoolChoice(SAMPvP.Config.SAMPvP_Soten_SubOption, "Yukikaze Only", "Also requires next weaponskill to be Yukikaze.");
 
                     break;

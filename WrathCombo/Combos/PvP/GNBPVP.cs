@@ -94,12 +94,12 @@ namespace WrathCombo.Combos.PvP
                         //Fated Circle and Followup
                         if (IsEnabled(CustomComboPreset.GNBPvP_FatedCircle))
                         {
-                            if (ActionReady(FatedCircle) && HasEffect(Buffs.NoMercy) && OriginalHook(Continuation) == Continuation)
+                            if (ActionReady(FatedCircle) && (HasEffect(Buffs.NoMercy) || JustUsed(RoughDivide, 1f)) && OriginalHook(Continuation) == Continuation)
                                 return FatedCircle;
                         }
 
                         //GnashingFang
-                        if (IsEnabled(CustomComboPreset.GNBPvP_ST_GnashingFang) && (ActionReady(GnashingFang) || OriginalHook(GnashingFang) != GnashingFang) && !ActionReady(FatedCircle))
+                        if (IsEnabled(CustomComboPreset.GNBPvP_ST_GnashingFang) && (ActionReady(GnashingFang) || OriginalHook(GnashingFang) != GnashingFang))
                             return OriginalHook(GnashingFang);
 
                     }
