@@ -34,7 +34,7 @@ namespace WrathCombo.Combos.PvP
                 Hidden = 1316,
                 Bunshin = 2010,
                 ShadeShift = 2011,
-                UnsealedSeitonTenchu = 3192,
+                SeitonUnsealed = 3192,
                 FleetingRaijuReady = 3211,
                 ZeshoMeppoReady = 4305;
         }
@@ -64,7 +64,7 @@ namespace WrathCombo.Combos.PvP
         {
             protected internal override CustomComboPreset Preset { get; } = CustomComboPreset.NINPvP_ST_BurstMode;
 
-            protected override uint Invoke(uint actionID, uint lastComboActionID, float comboTime, byte level)
+            protected override uint Invoke(uint actionID)
             {
                 if (actionID is SpinningEdge or GustSlash or AeolianEdge)
                 {
@@ -72,7 +72,7 @@ namespace WrathCombo.Combos.PvP
                     var threeMudrasCD = GetCooldown(ThreeMudra);
                     var fumaCD = GetCooldown(FumaShuriken);
                     var bunshinStacks = HasEffect(Buffs.Bunshin) ? GetBuffStacks(Buffs.Bunshin) : 0;
-                    bool canWeave = CanWeave(SpinningEdge);
+                    bool canWeave = CanWeave();
                     bool mudraMode = HasEffect(Buffs.ThreeMudra);
                     bool inMeleeRange = InMeleeRange();
                     bool isHidden = HasEffect(Buffs.Hidden);
@@ -85,11 +85,12 @@ namespace WrathCombo.Combos.PvP
                     if (isHidden)
                         return OriginalHook(Assassinate);
 
-                    if (!PvPCommon.IsImmuneToDamage())
+                    if (!PvPCommon.TargetImmuneToDamage())
                     {
 
                         // Seiton Tenchu priority for targets below 50% HP
-                        if (IsEnabled(CustomComboPreset.NINPvP_ST_SeitonTenchu) && GetTargetHPPercent() < GetOptionValue(Config.NINPVP_SeitonTenchu) && IsLB1Ready)
+                        if (IsEnabled(CustomComboPreset.NINPvP_ST_SeitonTenchu) && GetTargetHPPercent() < GetOptionValue(Config.NINPVP_SeitonTenchu) &&
+                            (IsLB1Ready || HasEffect(Buffs.SeitonUnsealed)))  // Limit Break or Unsealed buff
                             return OriginalHook(SeitonTenchu);
 
                         // Zesho Meppo
@@ -152,7 +153,7 @@ namespace WrathCombo.Combos.PvP
         {
             protected internal override CustomComboPreset Preset { get; } = CustomComboPreset.NINPvP_AoE_BurstMode;
 
-            protected override uint Invoke(uint actionID, uint lastComboActionID, float comboTime, byte level)
+            protected override uint Invoke(uint actionID)
             {
                 if (actionID == FumaShuriken)
                 {
@@ -162,7 +163,7 @@ namespace WrathCombo.Combos.PvP
                     bool dotonLocked = HasEffect(Debuffs.SealedDoton);
                     bool gokaLocked = HasEffect(Debuffs.SealedGokaMekkyaku);
                     bool mudraMode = HasEffect(Buffs.ThreeMudra);
-                    bool canWeave = CanWeave(SpinningEdge);
+                    bool canWeave = CanWeave();
                     var jobMaxHp = LocalPlayer.MaxHp;
                     var threshold = GetOptionValue(Config.NINPvP_Meisui_AoE);
                     var maxHPThreshold = jobMaxHp - 8000;
@@ -172,7 +173,7 @@ namespace WrathCombo.Combos.PvP
                     if (HasEffect(Buffs.Hidden))
                         return OriginalHook(Assassinate);
 
-                    if (!PvPCommon.IsImmuneToDamage())
+                    if (!PvPCommon.TargetImmuneToDamage())
                     {
                         // Seiton Tenchu priority for targets below 50% HP
                         if (IsEnabled(CustomComboPreset.NINPvP_AoE_SeitonTenchu) && GetTargetHPPercent() < GetOptionValue(Config.NINPVP_SeitonTenchu) && IsLB1Ready)
@@ -200,14 +201,12 @@ namespace WrathCombo.Combos.PvP
                             {
                                 if (IsEnabled(CustomComboPreset.NINPvP_AoE_Meisui) && inMeisuiRange && !meisuiLocked)
                                     return OriginalHook(Meisui);
-                                
-                                if (!gokaLocked)
-                                    return OriginalHook(GokaMekkyaku);
-                                
+
                                 if (!dotonLocked)
                                     return OriginalHook(Doton);
 
-
+                                if (!gokaLocked)
+                                    return OriginalHook(GokaMekkyaku);
                             }
                             else return actionID;  // if automatic is not enabled and in mudra mode, ensures fuma shuriken is the option so mudras can be properly chosen
                         }
@@ -217,10 +216,10 @@ namespace WrathCombo.Combos.PvP
 
                         if (InMeleeRange()) // Melee Combo
                         {
-                            if (lastComboActionID == GustSlash)
+                            if (ComboAction == GustSlash)
                                 return OriginalHook(AeolianEdge);
 
-                            if (lastComboActionID == SpinningEdge)
+                            if (ComboAction == SpinningEdge)
                                 return OriginalHook(GustSlash);
 
                             return OriginalHook(SpinningEdge);

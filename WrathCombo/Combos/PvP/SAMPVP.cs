@@ -60,39 +60,39 @@ namespace WrathCombo.Combos.PvP
         {
             protected internal override CustomComboPreset Preset { get; } = CustomComboPreset.SAMPvP_Burst;
 
-            protected override uint Invoke(uint actionID, uint lastComboMove, float comboTime, byte level)
+            protected override uint Invoke(uint actionID)
             {
-                #region Variables
-                float targetDistance = GetTargetDistance();
-                float targetCurrentPercentHp = GetTargetHPPercent();
-                float playerCurrentPercentHp = PlayerHealthPercentageHp();
-                uint chargesSoten = HasCharges(Soten) ? GetCooldown(Soten).RemainingCharges : 0;
-                bool isMoving = IsMoving;
-                bool inCombat = InCombat();
-                bool hasTarget = HasTarget();
-                bool inMeleeRange = targetDistance <= 5;
-                bool hasKaiten = HasEffect(Buffs.Kaiten);
-                bool hasZanshin = OriginalHook(Chiten) is Zanshin;
-                bool hasBind = HasEffectAny(PvPCommon.Debuffs.Bind);
-                bool targetHasImmunity = PvPCommon.IsImmuneToDamage();
-                bool isTargetPrimed = hasTarget && !targetHasImmunity;
-                bool targetHasKuzushi = TargetHasEffect(Debuffs.Kuzushi);
-                bool hasKaeshiNamikiri = OriginalHook(OgiNamikiri) is Kaeshi;
-                bool hasTendo = OriginalHook(MeikyoShisui) is TendoSetsugekka;
-                bool isYukikazePrimed = ComboTimer == 0 || lastComboMove is Kasha;
-                bool isMeikyoPrimed = !hasKaeshiNamikiri && !hasKaiten && !isMoving;
-                bool hasTendoKaeshi = OriginalHook(MeikyoShisui) is TendoKaeshiSetsugekka;
-                bool hasPrioWeaponskill = hasTendo || hasTendoKaeshi || hasKaeshiNamikiri;
-                bool isZantetsukenPrimed = IsLB1Ready && !hasBind && hasTarget && targetHasKuzushi && targetDistance <= 20;
-                bool isSotenPrimed = chargesSoten > Config.SAMPvP_Soten_Charges && !hasKaiten && !hasBind && !hasPrioWeaponskill;
-                bool isTargetInvincible = TargetHasEffectAny(PLDPvP.Buffs.HallowedGround) || TargetHasEffectAny(DRKPvP.Buffs.UndeadRedemption);
-                #endregion
-                // Zantetsuken
-                if (IsEnabled(CustomComboPreset.SAMPvP_Zantetsuken) && isZantetsukenPrimed && !isTargetInvincible)
-                    return OriginalHook(Zantetsuken);
-
                 if (actionID is Yukikaze or Gekko or Kasha)
                 {
+                    #region Variables
+                    float targetDistance = GetTargetDistance();
+                    float targetCurrentPercentHp = GetTargetHPPercent();
+                    float playerCurrentPercentHp = PlayerHealthPercentageHp();
+                    uint chargesSoten = HasCharges(Soten) ? GetCooldown(Soten).RemainingCharges : 0;
+                    bool isMoving = IsMoving();
+                    bool inCombat = InCombat();
+                    bool hasTarget = HasTarget();
+                    bool inMeleeRange = targetDistance <= 5;
+                    bool hasKaiten = HasEffect(Buffs.Kaiten);
+                    bool hasZanshin = OriginalHook(Chiten) is Zanshin;
+                    bool hasBind = HasEffectAny(PvPCommon.Debuffs.Bind);
+                    bool targetHasImmunity = PvPCommon.TargetImmuneToDamage();
+                    bool isTargetPrimed = hasTarget && !targetHasImmunity;
+                    bool targetHasKuzushi = TargetHasEffect(Debuffs.Kuzushi);
+                    bool hasKaeshiNamikiri = OriginalHook(OgiNamikiri) is Kaeshi;
+                    bool hasTendo = OriginalHook(MeikyoShisui) is TendoSetsugekka;
+                    bool isYukikazePrimed = ComboTimer == 0 || ComboAction is Kasha;
+                    bool hasTendoKaeshi = OriginalHook(MeikyoShisui) is TendoKaeshiSetsugekka;
+                    bool hasPrioWeaponskill = hasTendo || hasTendoKaeshi || hasKaeshiNamikiri;
+                    bool isMeikyoPrimed = IsOnCooldown(OgiNamikiri) && !hasKaeshiNamikiri && !hasKaiten && !isMoving;
+                    bool isZantetsukenPrimed = IsLB1Ready && !hasBind && hasTarget && targetHasKuzushi && targetDistance <= 20;
+                    bool isSotenPrimed = chargesSoten > Config.SAMPvP_Soten_Charges && !hasKaiten && !hasBind && !hasPrioWeaponskill;
+                    bool isTargetInvincible = TargetHasEffectAny(PLDPvP.Buffs.HallowedGround) || TargetHasEffectAny(DRKPvP.Buffs.UndeadRedemption);
+                    #endregion
+
+                    // Zantetsuken
+                    if (IsEnabled(CustomComboPreset.SAMPvP_Zantetsuken) && isZantetsukenPrimed && !isTargetInvincible)
+                        return OriginalHook(Zantetsuken);
 
                     // Chiten
                     if (IsEnabled(CustomComboPreset.SAMPvP_Chiten) && IsOffCooldown(Chiten) && inCombat && playerCurrentPercentHp < Config.SAMPvP_Chiten_PlayerHP)
@@ -101,8 +101,13 @@ namespace WrathCombo.Combos.PvP
                     if (isTargetPrimed)
                     {
                         // Zanshin
-                        if (hasZanshin && targetDistance <= 8 && CanWeave(actionID))
+                        if (hasZanshin && targetDistance <= 8)
                             return OriginalHook(Chiten);
+
+                        // Soten
+                        if (IsEnabled(CustomComboPreset.SAMPvP_Soten) && isSotenPrimed && targetDistance <= Config.SAMPvP_Soten_Range &&
+                            (!Config.SAMPvP_Soten_SubOption || (Config.SAMPvP_Soten_SubOption && isYukikazePrimed)))
+                            return OriginalHook(Soten);
 
                         if (inMeleeRange)
                         {
@@ -111,16 +116,10 @@ namespace WrathCombo.Combos.PvP
                                 return OriginalHook(MeikyoShisui);
 
                             // Mineuchi
-                            if (IsEnabled(CustomComboPreset.SAMPvP_Mineuchi) && IsOffCooldown(Mineuchi) &&
-                                (targetCurrentPercentHp <= Config.SAMPvP_Mineuchi_TargetHP && (Config.SAMPvP_Mineuchi_SubOption && hasTendo && !hasKaiten)))
+                            if (IsEnabled(CustomComboPreset.SAMPvP_Mineuchi) && IsOffCooldown(Mineuchi) && !HasBattleTarget() &&
+                                (targetCurrentPercentHp < Config.SAMPvP_Mineuchi_TargetHP || (Config.SAMPvP_Mineuchi_SubOption && hasTendo && !hasKaiten)))
                                 return OriginalHook(Mineuchi);
                         }
-                        // Soten
-                        if (IsEnabled(CustomComboPreset.SAMPvP_Soten) && isSotenPrimed && targetDistance <= Config.SAMPvP_Soten_Range &&
-                            (!Config.SAMPvP_Soten_SubOption || (Config.SAMPvP_Soten_SubOption && isYukikazePrimed)))
-                            return OriginalHook(Soten);
-
-
                     }
 
                     // Tendo Kaeshi Setsugekka
@@ -135,7 +134,7 @@ namespace WrathCombo.Combos.PvP
                     if (hasKaiten)
                         return OriginalHook(actionID);
 
-                    if (isTargetPrimed)
+                    if (!isMoving && isTargetPrimed)
                     {
                         // Tendo Setsugekka
                         if (hasTendo)

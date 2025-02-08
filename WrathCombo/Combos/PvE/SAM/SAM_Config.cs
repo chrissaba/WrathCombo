@@ -1,7 +1,6 @@
 using WrathCombo.Combos.PvP;
 using WrathCombo.CustomComboNS.Functions;
 using WrathCombo.Window.Functions;
-
 namespace WrathCombo.Combos.PvE;
 
 internal partial class SAM
@@ -18,12 +17,14 @@ internal partial class SAM
             SAM_Gekko_KenkiOvercapAmount = new(nameof(SAM_Gekko_KenkiOvercapAmount), 50),
             SAM_Oka_KenkiOvercapAmount = new(nameof(SAM_Oka_KenkiOvercapAmount), 50),
             SAM_Mangetsu_KenkiOvercapAmount = new(nameof(SAM_Mangetsu_KenkiOvercapAmount), 50),
-            SAM_ST_KenkiOvercapAmount = new(nameof(SAM_ST_KenkiOvercapAmount), 50),
+            SAM_ST_KenkiOvercapAmount = new(nameof(SAM_ST_KenkiOvercapAmount), 65),
             SAM_AoE_KenkiOvercapAmount = new(nameof(SAM_AoE_KenkiOvercapAmount), 50),
             SAM_ST_Higanbana_Threshold = new("SAM_ST_Higanbana_Threshold", 1),
+            SAM_ST_Higanbana_Suboption = new("SAM_ST_Higanbana_Suboption", 1),
             SAM_ST_ExecuteThreshold = new("SAM_ST_ExecuteThreshold", 1),
-            SAM_VariantCure = new("SAM_VariantCure");
-        
+            SAM_VariantCure = new("SAM_VariantCure"),
+            SAM_Balance_Content = new("SAM_Balance_Content", 1);
+
         public static UserBool
             SAM_Kasha_KenkiOvercap = new(nameof(SAM_Kasha_KenkiOvercap)),
             SAM_Yukaze_KenkiOvercap = new(nameof(SAM_Yukaze_KenkiOvercap)),
@@ -35,9 +36,21 @@ internal partial class SAM
         {
             switch (preset)
             {
+                case CustomComboPreset.SAM_ST_Opener:
+                    UserConfig.DrawBossOnlyChoice(SAM_Balance_Content);
+                    break;
+
                 case CustomComboPreset.SAM_ST_CDs_Iaijutsu:
-                    UserConfig.DrawSliderInt(0, 100, SAM_ST_Higanbana_Threshold,
+                    UserConfig.DrawSliderInt(0, 10, SAM_ST_Higanbana_Threshold,
                         "Stop using Higanbana on targets below this HP % (0% = always use).");
+
+                    UserConfig.DrawHorizontalRadioButton(SAM_ST_Higanbana_Suboption,
+                        "All Enemies",
+                        "Uses Higanbana regardless of targeted enemy type.", 0);
+
+                    UserConfig.DrawHorizontalRadioButton(SAM_ST_Higanbana_Suboption,
+                        "Bosses Only",
+                        "Only uses Higanbana when the targeted enemy is a boss.", 1);
 
                     break;
 
@@ -60,14 +73,14 @@ internal partial class SAM
                     break;
 
                 case CustomComboPreset.SAM_ST_Shinten:
-                    UserConfig.DrawSliderInt(50, 85, SAM_ST_KenkiOvercapAmount,
+                    UserConfig.DrawSliderInt(25, 85, SAM_ST_KenkiOvercapAmount,
                         "Set the Kenki overcap amount for ST combos.");
                     UserConfig.DrawSliderInt(0, 100, SAM_ST_ExecuteThreshold, "HP percent threshold to not save Kenki");
 
                     break;
 
                 case CustomComboPreset.SAM_AoE_Kyuten:
-                    UserConfig.DrawSliderInt(50, 85, SAM_AoE_KenkiOvercapAmount,
+                    UserConfig.DrawSliderInt(25, 85, SAM_AoE_KenkiOvercapAmount,
                         "Set the Kenki overcap amount for AOE combos.");
 
                     break;
@@ -148,15 +161,19 @@ internal partial class SAM
                 // Mineuchi
                 case CustomComboPreset.SAMPvP_Mineuchi:
                     UserConfig.DrawSliderInt(10, 100, SAMPvP.Config.SAMPvP_Mineuchi_TargetHP, "Target HP%", 210);
-                    UserConfig.DrawAdditionalBoolChoice(SAMPvP.Config.SAMPvP_Mineuchi_SubOption, "Burst Preparation", "Also uses Mineuchi before Tendo Setsugekka.");
+
+                    UserConfig.DrawAdditionalBoolChoice(SAMPvP.Config.SAMPvP_Mineuchi_SubOption, "Burst Preparation",
+                        "Also uses Mineuchi before Tendo Setsugekka.");
 
                     break;
 
                 // Soten
                 case CustomComboPreset.SAMPvP_Soten:
                     UserConfig.DrawSliderInt(0, 2, SAMPvP.Config.SAMPvP_Soten_Charges, "Charges to Keep", 178);
-                    UserConfig.DrawSliderInt(1, 20, SAMPvP.Config.SAMPvP_Soten_Range, "Maximum Range", 173);
-                    UserConfig.DrawAdditionalBoolChoice(SAMPvP.Config.SAMPvP_Soten_SubOption, "Yukikaze Only", "Also requires next weaponskill to be Yukikaze.");
+                    UserConfig.DrawSliderInt(1, 10, SAMPvP.Config.SAMPvP_Soten_Range, "Maximum Range", 173);
+
+                    UserConfig.DrawAdditionalBoolChoice(SAMPvP.Config.SAMPvP_Soten_SubOption, "Yukikaze Only",
+                        "Also requires next weaponskill to be Yukikaze.");
 
                     break;
             }
