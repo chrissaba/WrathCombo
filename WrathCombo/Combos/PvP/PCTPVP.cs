@@ -17,6 +17,7 @@ namespace WrathCombo.Combos.PvP
             TemperaCoat = 39211,
             SubtractivePalette = 39213,
             StarPrism = 39216,
+            Smudge = 39210,
             MogOfTheAges = 39782;
 
         internal class Buffs

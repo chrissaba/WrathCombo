@@ -69,7 +69,6 @@ namespace WrathCombo.Combos.PvP
                     float targetCurrentPercentHp = GetTargetHPPercent();
                     float playerCurrentPercentHp = PlayerHealthPercentageHp();
                     uint chargesSoten = HasCharges(Soten) ? GetCooldown(Soten).RemainingCharges : 0;
-                    bool isMoving = IsMoving();
                     bool inCombat = InCombat();
                     bool hasTarget = HasTarget();
                     bool inMeleeRange = targetDistance <= 5;
@@ -84,7 +83,7 @@ namespace WrathCombo.Combos.PvP
                     bool isYukikazePrimed = ComboTimer == 0 || ComboAction is Kasha;
                     bool hasTendoKaeshi = OriginalHook(MeikyoShisui) is TendoKaeshiSetsugekka;
                     bool hasPrioWeaponskill = hasTendo || hasTendoKaeshi || hasKaeshiNamikiri;
-                    bool isMeikyoPrimed = IsOnCooldown(OgiNamikiri) && !hasKaeshiNamikiri && !hasKaiten && !isMoving;
+                    bool isMeikyoPrimed = IsOnCooldown(OgiNamikiri) && !hasKaeshiNamikiri && !hasKaiten;
                     bool isZantetsukenPrimed = IsLB1Ready && !hasBind && hasTarget && targetHasKuzushi && targetDistance <= 20;
                     bool isSotenPrimed = chargesSoten > Config.SAMPvP_Soten_Charges && !hasKaiten && !hasBind && !hasPrioWeaponskill;
                     bool isTargetInvincible = TargetHasEffectAny(PLDPvP.Buffs.HallowedGround) || TargetHasEffectAny(DRKPvP.Buffs.UndeadRedemption);
@@ -134,7 +133,7 @@ namespace WrathCombo.Combos.PvP
                     if (hasKaiten)
                         return OriginalHook(actionID);
 
-                    if (!isMoving && isTargetPrimed)
+                    if (isTargetPrimed)
                     {
                         // Tendo Setsugekka
                         if (hasTendo)
